@@ -1,0 +1,26 @@
+{
+  "name": "leetchi-cagnotte",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayzens1/leetchi-cagnotte.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rayzens1/leetchi-cagnotte/issues"
+  },
+  "homepage": "https://github.com/rayzens1/leetchi-cagnotte#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "puppeteer": "^24.1.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}

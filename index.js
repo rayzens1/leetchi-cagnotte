@@ -16,46 +16,54 @@ async function scrapeWithPuppeteer(url) {
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
     try {
-        // Augmenter le timeout et éviter les erreurs de navigation
+        // Charger la page et attendre que les éléments soient présents
         await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
         // Vérifier si l'élément du montant existe avant de l'extraire
         const amountExists = await page.$('span[data-testid="MoneyPotAmount-CollectedAmount"]');
-        
+                
         if (amountExists) {
             const amount = await page.$eval('span[data-testid="MoneyPotAmount-CollectedAmount"]', el => el.textContent.trim());
-            console.log("💰 Montant récupéré:", amount);
+            console.log("\n💰 Montant récupéré:", amount);
             fs.writeFileSync('amount.txt', amount, 'utf8');
-            console.log("✅ Le montant a été sauvegardé dans amount.txt");
+            console.log("✅ Le montant a été sauvegardé dans amount.txt\n");
         } else {
             console.log("⚠️ L'élément du montant n'a pas été trouvé !");
         }
 
-        // Récupérer le nom du dernier donateur
-        const donorSelector = 'p[data-testid="LtContribution-Item-Name"]';
-        const donorExists = await page.$(donorSelector);
+        // Récupérer la liste des contributions
+        const contributions = await page.$$('div[data-testid="LtContribution-Item"]');
 
-        if (donorExists) {
-            const lastDonor = await page.$eval(donorSelector, el => el.textContent.trim());
+        if (contributions.length > 0) {
+            // Récupérer le dernier donateur (le premier dans la liste des contributions)
+            const lastContribution = contributions[0]; // Le plus récent est en haut
 
-            console.log(`🧑 Dernier donateur: ${lastDonor}`)
-            console.log("✅ Le donateur a été sauvegardé dans lastdonator.txt");
-            fs.writeFileSync('lastdonation.txt', lastDonor, 'utf8');
-
-            // Récupérer le montant si disponible
-            const amountSelector = 'span[data-testid="LtContribution-Item-Amount"]';
-            let lastDonationAmount = "Montant non affiché"; // Valeur par défaut
-
-            const amountExists = await page.$(amountSelector);
-            if (amountExists) {
-                lastDonationAmount = await page.$eval(amountSelector, el => el.textContent.trim());
-                console.log(`💰 Montant du don: ${lastDonationAmount}`);
-                fs.writeFileSync('lastdonation.txt', lastDonationAmount, 'utf8');
-            } else {
-                console.log(`💰❌ Le don n'est pas visible !`);
-                fs.writeFileSync('lastdonation.txt', "", 'utf8');
+            // Extraire le nom du donateur
+            const donorExists = await lastContribution.$('p[data-testid="LtContribution-Item-Name"]');
+            let lastDonor = "Inconnu";
+            
+            if (donorExists) {
+                lastDonor = await lastContribution.$eval('p[data-testid="LtContribution-Item-Name"]', el => el.textContent.trim());
             }
-            console.log("✅ Le montant du donateur a été sauvegardé dans lastdonation.txt");
+
+            // Extraire le montant si disponible
+            const amountExists = await lastContribution.$('span[data-testid="LtContribution-Item-Amount"]');
+            let lastDonationAmount = "Montant non affiché";
+            
+            if (amountExists) {
+                lastDonationAmount = await lastContribution.$eval('span[data-testid="LtContribution-Item-Amount"]', el => el.textContent.trim());
+                fs.writeFileSync('lastdonation.txt', `${lastDonationAmount}\n`, 'utf8');
+            } else {
+                fs.writeFileSync('lastdonation.txt', ``, 'utf8');
+            }
+
+            console.log(`🧑 Dernier donateur: ${lastDonor}`);
+            console.log(`💰 Montant du don: ${lastDonationAmount}`);
+
+            // Sauvegarder dans lastdonator.txt et lastdonation.txt
+            fs.writeFileSync('lastdonator.txt', `${lastDonor}`, 'utf8');
+
+            console.log("✅ Informations sauvegardées.\n");
         } else {
             console.log("⚠️ Aucun donateur trouvé !");
         }
@@ -63,14 +71,14 @@ async function scrapeWithPuppeteer(url) {
     } catch (error) {
         console.error("❌ Erreur lors du scraping :", error.message);
     } finally {
-        await browser.close(); // S'assurer que le navigateur est toujours fermé
+        await browser.close(); // Fermer le navigateur
     }
 }
 
-// Exécuter le scraping toutes les 10 secondes avec une meilleure gestion des erreurs
+// Exécuter le scraping toutes les 10 secondes
 setInterval(() => {
     scrapeWithPuppeteer(url);
-}, 10000);
+}, 30000);
 
 // Exécuter immédiatement au démarrage
 scrapeWithPuppeteer(url);

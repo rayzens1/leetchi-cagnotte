@@ -123,7 +123,7 @@ Linkedin: https://www.linkedin.com/in/kevin-gatti-tls/
 [issues-shield]: https://img.shields.io/github/issues/rayzens1/leetchi-cagnotte.svg?style=for-the-badge
 [issues-url]: https://github.com/rayzens1/leetchi-cagnotte/issues
 [license-shield]: https://img.shields.io/github/license/rayzens1/leetchi-cagnotte.svg?style=for-the-badge
-[license-url]: https://github.com/rayzens1/leetchi-cagnotte/blob/master/LICENSE.txt
+[license-url]: https://github.com/rayzens1/leetchi-cagnotte/blob/main/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/kevin-gatti-tls/
 [product-screenshot]: images/screenshot.png

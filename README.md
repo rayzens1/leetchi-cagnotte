@@ -27,7 +27,7 @@
 
   <p align="center">
     JS Script to crap a leetchi cagnotte page to get donation informations.
-    Developed for the Bordeaux faculty student association
+    <br/>Developed for the Bordeaux faculty student association
     <br />
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>

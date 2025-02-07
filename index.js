@@ -19,9 +19,6 @@ async function scrapeWithPuppeteer(url) {
         // Augmenter le timeout et éviter les erreurs de navigation
         await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
 
-        // Attendre quelques secondes pour être sûr que le contenu est bien chargé
-        await page.waitForTimeout(5000);
-
         // Vérifier si l'élément du montant existe avant de l'extraire
         const amountExists = await page.$('span[data-testid="MoneyPotAmount-CollectedAmount"]');
         
@@ -32,6 +29,35 @@ async function scrapeWithPuppeteer(url) {
             console.log("✅ Le montant a été sauvegardé dans amount.txt");
         } else {
             console.log("⚠️ L'élément du montant n'a pas été trouvé !");
+        }
+
+        // Récupérer le nom du dernier donateur
+        const donorSelector = 'p[data-testid="LtContribution-Item-Name"]';
+        const donorExists = await page.$(donorSelector);
+
+        if (donorExists) {
+            const lastDonor = await page.$eval(donorSelector, el => el.textContent.trim());
+
+            console.log(`🧑 Dernier donateur: ${lastDonor}`)
+            console.log("✅ Le donateur a été sauvegardé dans lastdonator.txt");
+            fs.writeFileSync('lastdonation.txt', lastDonor, 'utf8');
+
+            // Récupérer le montant si disponible
+            const amountSelector = 'span[data-testid="LtContribution-Item-Amount"]';
+            let lastDonationAmount = "Montant non affiché"; // Valeur par défaut
+
+            const amountExists = await page.$(amountSelector);
+            if (amountExists) {
+                lastDonationAmount = await page.$eval(amountSelector, el => el.textContent.trim());
+                console.log(`💰 Montant du don: ${lastDonationAmount}`);
+                fs.writeFileSync('lastdonation.txt', lastDonationAmount, 'utf8');
+            } else {
+                console.log(`💰❌ Le don n'est pas visible !`);
+                fs.writeFileSync('lastdonation.txt', "", 'utf8');
+            }
+            console.log("✅ Le montant du donateur a été sauvegardé dans lastdonation.txt");
+        } else {
+            console.log("⚠️ Aucun donateur trouvé !");
         }
 
     } catch (error) {

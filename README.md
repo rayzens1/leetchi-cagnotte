@@ -87,6 +87,9 @@ To launch the script:
    ```js
    node index.js
    ```
+Total pot amount is stored in amount.txt
+Last donator name is stored in lastdonator.txt
+Last donation amount is stored in lastdonation.txt (if is visible)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
